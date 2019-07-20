@@ -9,7 +9,7 @@ import (
 func main() {
 	var input string
 	var input_int int
-	numbers := make([]int, 3)
+	var numbers []int
 	for {
 		fmt.Printf("Enter an integer (\"X\" to exit): ")
 		fmt.Scan(&input)
@@ -22,5 +22,4 @@ func main() {
 			fmt.Println(numbers)
 		}
 	}
-
 }
