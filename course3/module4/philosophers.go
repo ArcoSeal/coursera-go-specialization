@@ -76,7 +76,7 @@ func (p *Philosopher) Eat() {
 	fmt.Printf("%d: Put down chopsticks\n", p.id)
 }
 
-func Host(philos []*Philosopher, req chan EatRequest, dc chan bool, wg *sync.WaitGroup) {
+func Host(philos []*Philosopher, maxEat int, req chan EatRequest, dc chan bool, wg *sync.WaitGroup) {
 	var eating int // number of currently eating philosophers
 	var alldone bool // will be true when all the philosophers are full
 
@@ -88,8 +88,8 @@ func Host(philos []*Philosopher, req chan EatRequest, dc chan bool, wg *sync.Wai
 			if philos[li].isEating || philos[ri].isEating { // denial
 				fmt.Printf("Host: denying %d (neighbour is eating)\n", er.id)
 				close(er.ac)
-			} else if eating >= 2 {
-				fmt.Printf("Host: denying %d (2 people are already eating)\n", er.id)
+			} else if eating >= maxEat {
+				fmt.Printf("Host: denying %d (%d people are already eating)\n", er.id, maxEat)
 				close(er.ac)
 			} else { // grant
 				fmt.Printf("Host: granting permission to %d to eat\n", er.id)
@@ -136,6 +136,7 @@ func allfull(philos []*Philosopher) bool {
 func main() {
 	nPhilos := 5 // number of dining philosophers
 	maxServ := 3 // philosopher noodle capacity
+	maxEat := 2 // maximum noodle throughput
 
 	var wg sync.WaitGroup
 	rc := make(chan EatRequest)
@@ -155,7 +156,7 @@ func main() {
 	}
 
 	wg.Add(1)
-	go Host(philos, rc, dc, &wg) // Host starts his shift
+	go Host(philos, maxEat, rc, dc, &wg) // Host starts his shift
 	for _, v := range philos { // Philsophers sit down to dinner
 		go v.Dine(rc, dc, maxServ)
 	}
