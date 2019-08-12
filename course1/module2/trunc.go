@@ -1,10 +1,11 @@
 package main
 
 import "fmt"
+import "strings"
 
 func main() {
-	var input float32
+	var input string // to avoid precision erorrs with casting floats, we're just going to use strings instead - only the output matters
 	fmt.Printf("Enter a float: ")
 	fmt.Scan(&input)
-	fmt.Printf("%.0f\n", input) // this will round, not just truncate
+	fmt.Println(strings.Split(input, ".")[0])
 }
